@@ -10,5 +10,28 @@ app.service('itunesService', function($http, $q){
   //You can return the http request or you can make your own promise in order to manipulate the data before you resolve it.
 
     //Code here
-    
+    this.getData = function (artist){
+    	var deferred = $q.defer()
+    	var baseUrl = 'https://itunes.apple.com/search?term=';
+    	$http.jsonp(baseUrl + artist + '&callback=JSON_CALLBACK')
+    		.then(function(response){
+    			var arrayToSort = response.data.results;
+    			var sortedArray = [];
+    			for (var i =0; i < arrayToSort.length; i++){
+    				sortedArray.push({
+		          AlbumArt: arrayToSort[i].artworkUrl100,
+		          Artist: arrayToSort[i].artistName,
+		          Collection: arrayToSort[i].collectionName,
+		          CollectionPrice: arrayToSort[i].collectionPrice,
+		          Play: arrayToSort[i].previewUrl,
+		          Type: arrayToSort[i].kind
+    				});
+    			}
+    			deferred.resolve(sortedArray)
+    	});
+    		return deferred.promise;
+    };
+
+
+
 });
